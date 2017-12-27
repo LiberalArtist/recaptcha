@@ -21,6 +21,6 @@
 (define pkg-desc
   "Utilities for using reCAPTCHA with web-server/formlets")
 
-(define version "0.0")
+(define version "0.1")
 
 (define pkg-authors '(philip))

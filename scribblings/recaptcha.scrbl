@@ -10,7 +10,7 @@
                      web-server/formlets
                      web-server/formlets/lib
                      recaptcha
-                     recaptcha/keys
+                     racket/serialize
                      ))
 
 This library provides utilities for using 
@@ -30,7 +30,8 @@ and behaves gracefully if reCAPTCHA is disabled.
                             [#:tabindex tabindex (or/c #f exact-integer?) #f]
                             [#:network-error-result network-error-result
                              (or/c #t #f 'disabled 'network-error) #f])
-         (formlet/c (or/c #t #f 'disabled 'network-error))]{
+         (and/c (formlet/c (or/c #t #f 'disabled 'network-error))
+                serializable?)]{
  Creates a @tech[#:doc '(lib "web-server/scribblings/web-server.scrbl")]{
   formlet} that embeds a reCAPTCHA widget. The resulting formlet will use
  the credentials specified by @racket[current-recaptcha-site-key] and
@@ -48,12 +49,22 @@ and behaves gracefully if reCAPTCHA is disabled.
  the @hyperlink["https://developers.google.com/recaptcha/docs/display#render_param"]{
   reCAPTCHA documentation}. If an argument is @racket[#f], the corresponding
  attribute is not included.
+
+ Formlets created by @racket[recaptcha-formlet] are @racket[serializable?],
+ facilitating use with stateless @(hash-lang) @racketmodname[web-server]
+ servlets.
+
+ @history[
+ #:changed "0.1" @elem{
+   Added serialization support in coordination with changes to
+   @racketmodname[web-server/formlets] in the Racket 6.11 release.
+   }]
 }
 
 
-
 @section{Credentials}
-@defmodule[recaptcha/keys]
+@defmodule[recaptcha/keys #:no-declare]
+@declare-exporting[recaptcha recaptcha/keys]
 
 The bindings documented in this section are re-exported by
 @racketmodname[recaptcha], but @racketmodname[recaptcha/keys] may be required

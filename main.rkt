@@ -1,7 +1,8 @@
-#lang racket/base
+#lang web-server/base
 
 (require racket/match
          racket/contract
+         racket/serialize
          web-server/formlets/lib
          web-server/http
          net/url
@@ -21,7 +22,8 @@
                  #:size (or/c #f "normal" "compact")
                  #:tabindex (or/c #f exact-integer?)
                  #:network-error-result (or/c #t #f 'disabled 'network-error)}
-                (formlet/c (or/c #t #f 'disabled 'network-error)))]
+                (and/c serializable?
+                       (formlet/c (or/c #t #f 'disabled 'network-error))))]
           ))
 
 
@@ -96,3 +98,5 @@
               #:method #"POST"))
            (hash-ref (read-json data-port) 'success #f))])
       'disabled))
+
+
