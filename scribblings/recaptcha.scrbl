@@ -78,7 +78,7 @@ directly for fewer dependencies.
                          #:value recaptcha-testing-secret-key])]{
  These parameters specify the (public) @tech{site key} and
  @tech{secret key} to be used for validation. Both must be non-false 
- for recaptcha to be enabled. Furthermore, unless they are valid, registered
+ for reCAPTCHA to be enabled. Furthermore, unless they are valid, registered
  keys used on an appropriate domain, validation should fail.
 }
 
