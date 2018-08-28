@@ -16,7 +16,7 @@
 This library provides utilities for using 
 @hyperlink["https://www.google.com/recaptcha"]{reCAPTCHA}
 with the @racketmodname[web-server/formlets] API.
-It currently supports reCAPTCHA v2 (the "no CAPTCHA reCAPTCHA").
+It currently supports reCAPTCHA v2 (the ``no CAPTCHA reCAPTCHA'').
 
 To actually use reCAPTCHA, you will need to
 @hyperlink["https://developers.google.com/recaptcha/docs/start"]{
