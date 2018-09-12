@@ -2,7 +2,7 @@
 
 (define collection "recaptcha")
 
-(define deps '("base"
+(define deps '(("base" #:version "6.1")
                "web-server-lib"
                ))
 
