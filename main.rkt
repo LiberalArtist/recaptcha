@@ -24,6 +24,11 @@
                  #:network-error-result (or/c #t #f 'disabled 'network-error)}
                 (and/c serializable?
                        (formlet/c (or/c #t #f 'disabled 'network-error))))]
+          [verify-recaptcha-response
+           (->* {string?}
+                {#:secret-key string?
+                 #:network-error-result (or/c #t #f 'disabled 'network-error)}
+                (or/c #t #f 'disabled 'network-error))]
           ))
 
 
@@ -81,22 +86,26 @@
       (case g-recaptcha-response
         [(disabled) g-recaptcha-response]
         [else
-         (with-handlers ([exn:fail:network? (λ (_) network-error-result)])
-           (define-values {status-line l-headers data-port}
-             (http-sendrecv/url
-              (struct-copy
-               url
-               (string->url
-                "https://www.google.com/recaptcha/api/siteverify")
-               [query
-                `([secret . ,(uri-encode (current-recaptcha-secret-key))]
-                  [response . ,(uri-encode
-                                (if (bytes? g-recaptcha-response)
-                                    (bytes->string/utf-8
-                                     g-recaptcha-response)
-                                    g-recaptcha-response))])])
-              #:method #"POST"))
-           (hash-ref (read-json data-port) 'success #f))])
+         (verify-recaptcha-response g-recaptcha-response
+                                    #:secret-key (current-recaptcha-secret-key)
+                                    #:network-error-result network-error-result)])
       'disabled))
 
-
+(define (verify-recaptcha-response g-recaptcha-response
+                                   #:secret-key [secret-key (current-recaptcha-secret-key)]
+                                   #:network-error-result [network-error-result #f])
+  (define-values {status-line l-headers data-port}
+    (let* ([u (string->url "https://www.google.com/recaptcha/api/siteverify")]
+           [query `([secret . ,(uri-encode secret-key)]
+                    [response . ,(uri-encode
+                                  (if (bytes? g-recaptcha-response)
+                                      (bytes->string/utf-8
+                                       g-recaptcha-response)
+                                      g-recaptcha-response))])]
+           [u (struct-copy url u
+                           [query query])])
+      (with-handlers ([exn:fail:network? (λ (_) network-error-result)])
+        (http-sendrecv/url u #:method #"POST"))))
+  (hash-ref (read-json data-port) 'success #f))
+  
+                                   
