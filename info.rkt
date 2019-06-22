@@ -1,5 +1,6 @@
 #lang info
 
+(define pkg-name "recaptcha")
 (define collection "recaptcha")
 
 (define deps '(("base" #:version "6.1")
